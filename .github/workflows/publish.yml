@@ -33,7 +33,6 @@ jobs:
       - name: Build and publish to npm
         run: |
           yarn build
-          npm login --registry=https://registry.npmjs.org/
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
