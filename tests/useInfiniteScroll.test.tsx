@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/vitest';
 import { act, render, waitFor } from '@testing-library/react';
 import { it, expect, vi, describe, beforeEach, afterEach } from 'vitest';
 import { useState } from 'react';
-import useInfiniteScroll from '../src/useInfiniteScroll';
+import { useInfiniteScroll } from '../src/useInfiniteScroll';
 
 // IntersectionObserver isn't available in test environment
 const mockIntersectionObserver = vi.fn();

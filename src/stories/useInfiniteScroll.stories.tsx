@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { StoryFn, Meta } from '@storybook/react';
-import useInfiniteScroll from '../useInfiniteScroll'; // Update the import path
+import { useInfiniteScroll } from '../useInfiniteScroll';
 
 // Define your component's story meta information
 export default {
