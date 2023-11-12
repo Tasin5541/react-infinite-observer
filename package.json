@@ -5,13 +5,19 @@
   "author": "Miftaul Mannan",
   "license": "MIT",
   "keywords": [
+    "react",
+    "infinite",
+    "scroll",
     "infinite-scroll",
     "react-infinite-scroll",
-    "react-infinite-scroll-hook"
+    "react-infinite-observer",
+    "react-infinite-scroll-hook",
+    "react-infinite-observer-scroll"
   ],
+  "homepage": "https://tasin5541.github.io/react-infinite-observer",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/Tasin5541/react-infinite-observer.git"
   },
   "scripts": {
     "dev": "concurrently \"yarn build --watch\" \"yarn storybook\" \"yarn test\" ",
