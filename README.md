@@ -1,6 +1,7 @@
 # React Infinite Observer
 
 Check live [StoryBook demo](https://tasin5541.github.io/react-infinite-observer/)
+
 ![React Infinite Observer](https://raw.githubusercontent.com/Tasin5541/react-infinite-observer/main/demo/demo.gif)
 
 ## Overview
@@ -28,7 +29,7 @@ or
 yarn add react-infinite-observer
 ```
 
-### Usage
+## Usage
 
 Basic usage
 
