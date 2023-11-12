@@ -31,7 +31,6 @@ jobs:
           GH_TOKEN: ${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and publish to npm
-        if: github.ref == 'refs/tags/v*' # Only run on version tags
         run: |
           yarn build
           npm login --registry=https://registry.npmjs.org/
