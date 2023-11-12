@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef, Dispatch, SetStateAction } from 'react';
 
-const useInfiniteScroll = (setPage: Dispatch<SetStateAction<number>>) => {
+export const useInfiniteScroll = (
+  setPage: Dispatch<SetStateAction<number>>
+) => {
   const [lastElement, setLastElement] = useState<HTMLElement | null>(null);
 
   const observer = useRef(
@@ -32,5 +34,3 @@ const useInfiniteScroll = (setPage: Dispatch<SetStateAction<number>>) => {
 
   return [setLastElement];
 };
-
-export default useInfiniteScroll;
