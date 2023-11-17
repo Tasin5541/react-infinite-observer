@@ -35,6 +35,7 @@
     "release": "yarn build && yarn release-it",
     "link:self": "yarn yalc publish && yarn link"
   },
+  "main": "./dist/index.js",
   "tsup": {
     "entry": [
       "src/index.ts"
