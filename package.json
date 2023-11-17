@@ -131,6 +131,7 @@
     "eslint-plugin-storybook": "0.6.15",
     "eslint-plugin-typescript-sort-keys": "3.1.0",
     "eslint-plugin-unused-imports": "3.0.0",
+    "eslint-plugin-vitest": "^0.3.9",
     "husky": "8.0.3",
     "jsdom": "^22.1.0",
     "lint-staged": "15.0.2",

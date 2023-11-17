@@ -9,6 +9,7 @@ module.exports = {
     'airbnb',
     'prettier',
     'plugin:storybook/recommended',
+    'plugin:vitest/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -26,6 +27,7 @@ module.exports = {
     'prettier',
     'prefer-arrow',
     'sort-class-members',
+    'vitest',
   ],
   rules: {
     '@typescript-eslint/no-unused-vars': 'error',

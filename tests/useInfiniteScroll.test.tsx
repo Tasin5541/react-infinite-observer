@@ -1,139 +1,69 @@
 import '@testing-library/jest-dom/vitest';
-import { act, render, waitFor } from '@testing-library/react';
-import { it, expect, vi, describe, beforeEach, afterEach } from 'vitest';
-import { useState } from 'react';
+import { render } from '@testing-library/react';
+import { Dispatch, SetStateAction } from 'react';
+import { vi } from 'vitest';
 import { useInfiniteScroll } from '../src/useInfiniteScroll';
+import { intersect, getObserverOf } from './test-utils';
 
-// IntersectionObserver isn't available in test environment
-const mockIntersectionObserver = vi.fn();
-mockIntersectionObserver.mockReturnValue({
-  observe: () => null,
-  unobserve: () => null,
-  disconnect: () => null,
-});
-beforeEach(() => {
-  window.IntersectionObserver = mockIntersectionObserver;
-});
-afterEach(() => {
-  delete (window as any).IntersectionObserver;
-});
-describe('useInfiniteScroll', () => {
-  it('should increase the page number when the last element is intersecting', async () => {
-    const TestComponent = () => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [page, setPage] = useState<number>(1);
-      const [setLastElement] = useInfiniteScroll(setPage);
+const HookComponent = ({
+  setPage,
+}: {
+  setPage: Dispatch<SetStateAction<number>>;
+}) => {
+  const [setLastElement] = useInfiniteScroll(setPage);
+  return (
+    <div data-testid="wrapper" ref={setLastElement}>
+      test
+    </div>
+  );
+};
 
-      // Simulate a list of items
-      const items = Array.from({ length: 10 }, (_, index) => (
-        <div key={index} style={{ padding: '2px', border: '1px solid #ccc' }}>
-          Item {index + 1}
-        </div>
-      ));
+test('creates an observer', () => {
+  const setPage = vi.fn();
+  const { getByTestId } = render(<HookComponent setPage={setPage} />);
+  const wrapper = getByTestId('wrapper');
+  const instance = getObserverOf(wrapper);
 
-      return (
-        <div>
-          {items}
-          <div
-            ref={setLastElement}
-            style={{ height: '2px', background: 'lightblue' }}
-          >
-            {/* This element will trigger the infinite scroll */}
-          </div>
-        </div>
-      );
-    };
-
-    const { getByText } = render(<TestComponent />);
-    // Initial render should have 10 items
-    for (let i = 1; i <= 10; i++) {
-      expect(getByText(`Item ${i}`)).toBeInTheDocument();
-    }
-
-    act(() => {
-      mockIntersectionObserver.mock.calls[0][0]([{ isIntersecting: true }]);
-    });
-
-    // Wait for the callback to be executed
-    await waitFor(() => {
-      // Perform assertions inside the callback
-      expect(mockIntersectionObserver.mock.calls[0][0]).toHaveLength(1); // observe
-      expect(mockIntersectionObserver.mock.calls[1][0]).toHaveLength(1); // unobserve
-    });
-  });
+  expect(instance.observe).toHaveBeenCalledWith(wrapper);
 });
 
-// useInfiniteScroll.test.tsx
+test('does not call the callback without intersection', () => {
+  const setPage = vi.fn();
+  const { getByTestId } = render(<HookComponent setPage={setPage} />);
 
-// import '@testing-library/jest-dom/vitest';
-// import { render, act } from '@testing-library/react';
-// import React, { useState } from 'react';
-// import { afterAll, beforeAll, expect, vi, test } from 'vitest';
-// import useInfiniteScroll from '../src/useInfiniteScroll'; // Update the import path
+  const wrapper = getByTestId('wrapper');
+  intersect(wrapper, false);
 
-// // Mock IntersectionObserver
-// class IntersectionObserverMock {
-//   observe = vi.fn();
+  expect(setPage).not.toHaveBeenCalled();
+});
 
-//   unobserve = vi.fn();
-// }
+test('calls the callback on intersection', () => {
+  const setPage = vi.fn();
+  const { getByTestId } = render(<HookComponent setPage={setPage} />);
 
-// // Replace the global IntersectionObserver with our mock
-// beforeAll(() => {
-//   window.IntersectionObserver = IntersectionObserverMock as any;
-// });
+  const wrapper = getByTestId('wrapper');
+  intersect(wrapper, true);
 
-// // Restore the original IntersectionObserver after all tests
-// afterAll(() => {
-//   delete (window as any).IntersectionObserver;
-// });
+  expect(setPage).toHaveBeenCalledTimes(1);
+});
 
-// test('useInfiniteScroll triggers setPage when the last element is intersected', () => {
-//   const TestComponent = () => {
-//     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-//     const [page, setPage] = useState<number>(1);
-//     const [setLastElement] = useInfiniteScroll(setPage);
+test('calls the callback twice', () => {
+  const setPage = vi.fn();
+  const { getByTestId } = render(<HookComponent setPage={setPage} />);
 
-//     // Simulate a list of items
-//     const items = Array.from({ length: 10 }, (_, index) => (
-//       <div key={index} style={{ padding: '20px', border: '1px solid #ccc' }}>
-//         Item {index + 1}
-//       </div>
-//     ));
+  const wrapper = getByTestId('wrapper');
+  intersect(wrapper, true);
+  intersect(wrapper, false);
+  intersect(wrapper, true);
 
-//     return (
-//       <div>
-//         {items}
-//         <div
-//           ref={setLastElement}
-//           style={{ height: '20px', background: 'lightblue' }}
-//         >
-//           {/* This element will trigger the infinite scroll */}
-//         </div>
-//       </div>
-//     );
-//   };
+  expect(setPage).toHaveBeenCalledTimes(2);
+});
 
-//   const { getByText } = render(<TestComponent />);
-
-//   // Initial render should have 10 items
-//   for (let i = 1; i <= 10; i++) {
-//     expect(getByText(`Item ${i}`)).toBeInTheDocument();
-//   }
-
-//   // Trigger intersection by mocking the IntersectionObserver callback
-//   act(() => {
-//     (IntersectionObserverMock as any).mock.calls[0][0]([
-//       { isIntersecting: true },
-//     ]);
-//   });
-
-//   // After intersection, the hook should trigger setPage and add more items
-//   for (let i = 1; i <= 20; i++) {
-//     expect(getByText(`Item ${i}`)).toBeInTheDocument();
-//   }
-
-//   // Ensure the correct number of observe and unobserve calls were made
-//   expect((IntersectionObserverMock as any).mock.calls[0][0]).toHaveLength(1); // observe
-//   expect((IntersectionObserverMock as any).mock.calls[1][0]).toHaveLength(1); // unobserve
-// });
+test('unmounts the hook', () => {
+  const setPage = vi.fn();
+  const { getByTestId, unmount } = render(<HookComponent setPage={setPage} />);
+  const wrapper = getByTestId('wrapper');
+  const instance = getObserverOf(wrapper);
+  unmount();
+  expect(instance.unobserve).toHaveBeenCalledTimes(1);
+});
