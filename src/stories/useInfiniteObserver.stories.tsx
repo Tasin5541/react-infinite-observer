@@ -1,13 +1,13 @@
 // useInfiniteScroll.stories.tsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { StoryFn, Meta } from '@storybook/react';
-import { useInfiniteScroll } from '../useInfiniteScroll';
+import { useInfiniteObserver } from '../useInfiniteObserver';
 
 // Define your component's story meta information
 export default {
   title: 'Hooks/useInfiniteScroll',
-  component: useInfiniteScroll,
+  component: useInfiniteObserver,
 } as Meta;
 
 type itemType = {
@@ -25,19 +25,19 @@ type itemType = {
 
 const ItemComponent = ({
   items,
-  setLastElement,
+  setRefElement,
   isAdvanced = false,
 }: {
   isAdvanced: boolean;
   items: itemType[];
-  setLastElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
+  setRefElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
 }) => (
   <>
     {isAdvanced
       ? items.map((item, index) => (
           <li
             key={`${item.id.name}-${item.id.value}-${item.login.uuid}`}
-            ref={index === items.length - 1 ? setLastElement : undefined}
+            ref={index === items.length - 1 ? setRefElement : undefined}
           >
             {item.name.last}
           </li>
@@ -47,7 +47,7 @@ const ItemComponent = ({
             {item.name.last}
           </li>
         ))}
-    <div ref={setLastElement} />
+    <div ref={setRefElement} />
   </>
 );
 
@@ -56,8 +56,12 @@ const Template = ({ isAdvanced = false }: { isAdvanced: boolean }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState<number>(1);
 
+  const onIntersection = useCallback(() => {
+    setPage((pageNo) => pageNo + 1);
+  }, []);
+
   // Use the hook in your component
-  const [setLastElement] = useInfiniteScroll(setPage);
+  const [setRefElement] = useInfiniteObserver({ onIntersection });
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -95,7 +99,7 @@ const Template = ({ isAdvanced = false }: { isAdvanced: boolean }) => {
       <ul>
         <ItemComponent
           items={items}
-          setLastElement={setLastElement}
+          setRefElement={setRefElement}
           isAdvanced={isAdvanced}
         />
       </ul>
