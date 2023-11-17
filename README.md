@@ -39,14 +39,19 @@ yarn add react-infinite-observer
 Static Ref
 
 ```tsx
-import { FC, useState, useEffect } from 'react';
-import { useInfiniteScroll } from 'react-infinite-observer';
+import { FC, useState, useCallback, useEffect } from 'react';
+import { useInfiniteObserver } from 'react-infinite-observer';
 
 export const App: FC = () => {
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [setLastElement] = useInfiniteScroll(setPage);
+
+  const onIntersection = useCallback(() => {
+    setPage((pageNo) => pageNo + 1);
+  }, []);
+
+  const [setRefElement] = useInfiniteObserver(onIntersection);
 
   const fetchData = async () => {
     // Fetch more data and update state
@@ -60,14 +65,14 @@ export const App: FC = () => {
   }, [page]);
 
   return (
-    <div id="scrollAreab">
+    <div>
       <ul>
         {items.map((item) => (
           <li key={`${item.id.name}-${item.id.value}-${item.login.uuid}`}>
             {item.name.last}
           </li>
         ))}
-        <div ref={setLastElement}></div>
+        <div ref={setRefElement}></div>
       </ul>
       {isLoading && <p>Loading...</p>}
     </div>
@@ -78,14 +83,19 @@ export const App: FC = () => {
 Dynamic Ref (keep fetching data until screen is filled)
 
 ```tsx
-import { FC, useState, useEffect } from 'react';
-import { useInfiniteScroll } from 'react-infinite-observer';
+import { FC, useState, useCallback, useEffect } from 'react';
+import { useInfiniteObserver } from 'react-infinite-observer';
 
 export const App: FC = () => {
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [setLastElement] = useInfiniteScroll(setPage);
+
+  const onIntersection = useCallback(() => {
+    setPage((pageNo) => pageNo + 1);
+  }, []);
+
+  const [setRefElement] = useInfiniteObserver(onIntersection);
 
   const fetchData = async () => {
     // Fetch more data and update state
@@ -99,12 +109,12 @@ export const App: FC = () => {
   }, [page]);
 
   return (
-    <div id="scrollAreab">
+    <div>
       <ul>
         {items.map((item, index) => (
           <li
             key={`${item.id.name}-${item.id.value}-${item.login.uuid}`}
-            ref={index === items.length - 1 ? setLastElement : undefined}
+            ref={index === items.length - 1 ? setRefElement : undefined}
           >
             {item.name.last}
           </li>
@@ -116,9 +126,16 @@ export const App: FC = () => {
 };
 ```
 
-## Props
+## API
 
-- **setPage (required):** A setState function that will be called when the observer intersects with the trigger point and increase the page size, typically used for fetching more data.
+### infiniteObserverOptions
+
+Provide these as the options argument in the `useInfiniteObserver` hook.
+
+| Name               | Type         | Default     | Description                                                                                    |
+| ------------------ | ------------ | ----------- | ---------------------------------------------------------------------------------------------- |
+| **threshold**      | `number`     | `1`         | Number between `0` and `1` indicating the percentage that should be visible before triggering. |
+| **onIntersection** | `() => void` | `undefined` | Call this function whenever the Ref Element is in view for the first time.                     |
 
 ## Example
 
