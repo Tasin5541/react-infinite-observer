@@ -1,4 +1,9 @@
-# React Infinite Observer
+# react-infinite-observer
+
+[![Version Badge][npm-version-svg]][package-url]
+[![GZipped size][npm-minzip-svg]][bundlephobia-url]
+[![Test][test-image]][test-url]
+[![License][license-image]][license-url]
 
 Check live [StoryBook demo](https://tasin5541.github.io/react-infinite-observer/)
 
@@ -31,7 +36,46 @@ yarn add react-infinite-observer
 
 ## Usage
 
-Basic usage
+Static Ref
+
+```tsx
+import { FC, useState, useEffect } from 'react';
+import { useInfiniteScroll } from 'react-infinite-observer';
+
+export const App: FC = () => {
+  const [items, setItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [setLastElement] = useInfiniteScroll(setPage);
+
+  const fetchData = async () => {
+    // Fetch more data and update state
+    setIsLoading(true);
+    // ... fetch data logic
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [page]);
+
+  return (
+    <div id="scrollAreab">
+      <ul>
+        {items.map((item) => (
+          <li key={`${item.id.name}-${item.id.value}-${item.login.uuid}`}>
+            {item.name.last}
+          </li>
+        ))}
+        <div ref={setLastElement}></div>
+      </ul>
+      {isLoading && <p>Loading...</p>}
+    </div>
+  );
+};
+```
+
+Dynamic Ref (keep fetching data until screen is filled)
 
 ```tsx
 import { FC, useState, useEffect } from 'react';
@@ -58,51 +102,13 @@ export const App: FC = () => {
     <div id="scrollAreab">
       <ul>
         {items.map((item, index) => (
-          <li key={index}>{item.name.last}</li>
+          <li
+            key={`${item.id.name}-${item.id.value}-${item.login.uuid}`}
+            ref={index === items.length - 1 ? setLastElement : undefined}
+          >
+            {item.name.last}
+          </li>
         ))}
-        <div ref={setLastElement}></div>
-      </ul>
-      {isLoading && <p>Loading...</p>}
-    </div>
-  );
-};
-```
-
-Advanced usage (keep fetching data until screen is filled)
-
-```tsx
-import { FC, useState, useEffect } from 'react';
-import { useInfiniteScroll } from 'react-infinite-observer';
-
-export const App: FC = () => {
-  const [items, setItems] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [setLastElement] = useInfiniteScroll(setPage);
-
-  const fetchData = async () => {
-    // Fetch more data and update state
-    setIsLoading(true);
-    // ... fetch data logic
-    setIsLoading(false);
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [page]);
-
-  return (
-    <div id="scrollAreab">
-      <ul>
-        {items.map((item, index) =>
-          index === items.length - 1 ? (
-            <li key={index} ref={setLastElement}>
-              {item.name.last}
-            </li>
-          ) : (
-            <li key={index}>{item.name.last}</li>
-          )
-        )}
       </ul>
       {isLoading && <p>Loading...</p>}
     </div>
@@ -121,3 +127,12 @@ Check out the [stackblitz snippet](https://stackblitz.com/edit/stackblitz-starte
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](https://github.com/Tasin5541/react-infinite-observer/blob/main/LICENSE) file for details.
+
+[package-url]: https://www.npmjs.com/package/react-infinite-observer
+[npm-version-svg]: https://img.shields.io/npm/v/react-infinite-observer.svg
+[npm-minzip-svg]: https://img.shields.io/bundlephobia/minzip/react-infinite-observer.svg
+[bundlephobia-url]: https://bundlephobia.com/result?p=react-infinite-observer
+[license-image]: https://img.shields.io/npm/l/react-infinite-observer.svg
+[license-url]: LICENSE
+[test-image]: https://github.com/Tasin5541/react-infinite-observer/workflows/Test/badge.svg
+[test-url]: https://github.com/Tasin5541/react-infinite-observer/actions?query=workflow%3ATest

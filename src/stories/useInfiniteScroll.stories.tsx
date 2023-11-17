@@ -88,8 +88,8 @@ const Template = ({ isAdvanced = false }: { isAdvanced: boolean }) => {
     <div>
       <p>
         {isAdvanced
-          ? 'With Advanced Usage, if the initial fetched list does not fill the screen, the list is fetched multiple times untill screen is filled'
-          : 'With Basic Usage, if the initial fetched list does not fill the screen, the list is fetched again only once. If even that does not fill thes creen, infinite scrolling stops working'}
+          ? 'With Dynamic Ref, if the initial fetched list does not fill the screen, the list is fetched multiple times untill screen is filled'
+          : 'With Static Ref, if the initial fetched list does not fill the screen, the list is fetched again only once. If even that does not fill thes creen, infinite scrolling stops working'}
       </p>
       <p>Fetch Count: {page}</p>
       <ul>
@@ -110,5 +110,5 @@ const BasicStory: StoryFn = () => <Template isAdvanced={false} />;
 const AdvancedStory: StoryFn = () => <Template isAdvanced />;
 
 // Attach the template to the story
-export const AdvancedUsage = AdvancedStory.bind({});
-export const BasicUsage = BasicStory.bind({});
+export const DynamicRefElement = AdvancedStory.bind({});
+export const StaticRefElement = BasicStory.bind({});
