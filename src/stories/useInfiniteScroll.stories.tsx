@@ -23,8 +23,35 @@ type itemType = {
   };
 };
 
-// Define a template for the story
-const Template: StoryFn = () => {
+const ItemComponent = ({
+  items,
+  setLastElement,
+  isAdvanced = false,
+}: {
+  isAdvanced: boolean;
+  items: itemType[];
+  setLastElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
+}) => (
+  <>
+    {isAdvanced
+      ? items.map((item, index) => (
+          <li
+            key={`${item.id.name}-${item.id.value}-${item.login.uuid}`}
+            ref={index === items.length - 1 ? setLastElement : undefined}
+          >
+            {item.name.last}
+          </li>
+        ))
+      : items.map((item) => (
+          <li key={`${item.id.name}-${item.id.value}-${item.login.uuid}`}>
+            {item.name.last}
+          </li>
+        ))}
+    <div ref={setLastElement} />
+  </>
+);
+
+const Template = ({ isAdvanced = false }: { isAdvanced: boolean }) => {
   const [items, setItems] = useState<itemType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState<number>(1);
@@ -59,26 +86,29 @@ const Template: StoryFn = () => {
 
   return (
     <div>
+      <p>
+        {isAdvanced
+          ? 'With Advanced Usage, if the initial fetched list does not fill the screen, the list is fetched multiple times untill screen is filled'
+          : 'With Basic Usage, if the initial fetched list does not fill the screen, the list is fetched again only once. If even that does not fill thes creen, infinite scrolling stops working'}
+      </p>
+      <p>Fetch Count: {page}</p>
       <ul>
-        {items.map((item, index) =>
-          index === items.length - 1 ? (
-            <li
-              key={`${item.id.name}-${item.id.value}-${item.login.uuid}`}
-              ref={setLastElement}
-            >
-              {item.name.last}
-            </li>
-          ) : (
-            <li key={`${item.id.name}-${item.id.value}-${item.login.uuid}`}>
-              {item.name.last}
-            </li>
-          )
-        )}
+        <ItemComponent
+          items={items}
+          setLastElement={setLastElement}
+          isAdvanced={isAdvanced}
+        />
       </ul>
       {isLoading && <p>Loading...</p>}
     </div>
   );
 };
 
+// Define templates for the story
+const BasicStory: StoryFn = () => <Template isAdvanced={false} />;
+
+const AdvancedStory: StoryFn = () => <Template isAdvanced />;
+
 // Attach the template to the story
-export const BasicUsage = Template.bind({});
+export const AdvancedUsage = AdvancedStory.bind({});
+export const BasicUsage = BasicStory.bind({});
