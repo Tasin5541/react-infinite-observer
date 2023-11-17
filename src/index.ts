@@ -1,1 +1,1 @@
-export * from './useInfiniteScroll';
+export * from './useInfiniteObserver';
