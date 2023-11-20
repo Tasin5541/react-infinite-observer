@@ -151,5 +151,5 @@ This project is licensed under the MIT License - see the [LICENSE](https://githu
 [bundlephobia-url]: https://bundlephobia.com/result?p=react-infinite-observer
 [license-image]: https://img.shields.io/npm/l/react-infinite-observer.svg
 [license-url]: LICENSE
-[test-image]: https://github.com/Tasin5541/react-infinite-observer/workflows/Test/badge.svg
+[test-image]: https://github.com/Tasin5541/react-infinite-observer/actions/workflows/test.yml/badge.svg?branch=main
 [test-url]: https://github.com/Tasin5541/react-infinite-observer/actions?query=workflow%3ATest
