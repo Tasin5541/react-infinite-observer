@@ -6,7 +6,7 @@ import { useInfiniteObserver } from '../useInfiniteObserver';
 
 // Define your component's story meta information
 export default {
-  title: 'Hooks/useInfiniteScroll',
+  title: 'Hooks/useInfiniteObserver',
   component: useInfiniteObserver,
 } as Meta;
 
